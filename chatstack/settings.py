@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     
     'users',
+    'chatroom',
     
     'rest_framework',
     'corsheaders',

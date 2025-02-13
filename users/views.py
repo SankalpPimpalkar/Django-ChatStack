@@ -72,3 +72,34 @@ class Logout(APIView):
         }
         
         return response
+
+class UpdateDetails(APIView):
+    def patch(self, request):
+        token = request.COOKIES.get('token')
+
+        if not token:
+            raise AuthenticationFailed("Unauthenticated")
+        
+        try:
+            payload = jwt.decode(token, 'SECRET', algorithms=['HS256'])
+        except jwt.ExpiredSignatureError:
+            raise AuthenticationFailed('Invalid or Expired token')
+        
+        user = User.objects.filter(id=payload.get('id')).first()
+        
+        if user is None:
+            raise AuthenticationFailed('User not found')
+        
+        for key,value in request.data.items():
+            if value is not None:
+                if hasattr(user,key):
+                    setattr(user, key, value)
+        
+        user.save()
+        serialize = UserSerializer(user)
+        
+        return Response({
+            'message': 'User details updated',
+            'data': serialize.data,
+            'success': True
+        })
