@@ -16,6 +16,8 @@ class RoomSerializer(serializers.ModelSerializer):
         depth = 5
 
 class MessageSerializer(serializers.ModelSerializer):
+    room = RoomSerializer()
+    
     class Meta:
         model = Message
         fields = "__all__"
